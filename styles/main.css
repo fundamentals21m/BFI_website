@@ -88,6 +88,24 @@ body {
   overflow-x: hidden;
 }
 
+/* Skip Link for Accessibility */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--primary);
+  color: white;
+  padding: 8px;
+  z-index: 100;
+  transition: top 0.3s;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 /* Subtle animated background */
 body::before {
   content: '';
@@ -1695,5 +1713,13 @@ label {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  /* Better handling for h1 gradient */
+  h1 {
+    background: var(--primary);
+    -webkit-text-fill-color: initial;
+    background-clip: initial;
+    animation: none;
   }
 }

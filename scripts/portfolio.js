@@ -12,6 +12,12 @@ const portfolioCalc = {
   timeHorizon: 10,
   startYear: 2014,
 
+  // Validation constants
+  minPortfolioSize: 10000,
+  maxPortfolioSize: 1000000000,
+  minAllocation: 0,
+  maxAllocation: 100,
+
   // Historical annual returns (approximate)
   historicalReturns: {
     stocks: { // S&P 500
@@ -28,6 +34,33 @@ const portfolioCalc = {
     }
   }
 };
+
+// Utility function
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+// Validation functions
+function validatePortfolioSize(value) {
+  const size = parseFloat(value);
+  if (isNaN(size)) return false;
+  return size >= portfolioCalc.minPortfolioSize && size <= portfolioCalc.maxPortfolioSize;
+}
+
+function validateAllocation(stock, bond, btc) {
+  const total = stock + bond + btc;
+  const tolerance = 0.1;
+  return Math.abs(total - 100) <= tolerance &&
+         stock >= portfolioCalc.minAllocation && stock <= portfolioCalc.maxAllocation &&
+         bond >= portfolioCalc.minAllocation && bond <= portfolioCalc.maxAllocation &&
+         btc >= portfolioCalc.minAllocation && btc <= portfolioCalc.maxAllocation;
+}
+
+function sanitizeInput(value, min = -Infinity, max = Infinity) {
+  const num = parseFloat(value);
+  if (isNaN(num)) return 0;
+  return Math.max(min, Math.min(max, num));
+}
 
 // Initialize calculator
 function initPortfolioCalculator() {
@@ -50,56 +83,94 @@ function initPortfolioCalculator() {
 }
 
 function handleInputChange(e) {
-  const id = e.target.id;
-  let value = parseFloat(e.target.value) || 0;
+  try {
+    const id = e.target.id;
+    let value = sanitizeInput(e.target.value);
 
-  // Handle allocation constraints
-  if (id === 'btcAllocation') {
-    portfolioCalc.btcAllocation = value;
-    // Proportionally reduce stocks and bonds
-    const remaining = 100 - value;
-    const ratio = portfolioCalc.stockAllocation / (portfolioCalc.stockAllocation + portfolioCalc.bondAllocation) || 0.6;
-    portfolioCalc.stockAllocation = Math.round(remaining * ratio);
-    portfolioCalc.bondAllocation = remaining - portfolioCalc.stockAllocation;
-
-    document.getElementById('stockAllocation').value = portfolioCalc.stockAllocation;
-    document.getElementById('bondAllocation').value = portfolioCalc.bondAllocation;
-  } else if (id === 'stockAllocation' || id === 'bondAllocation') {
-    portfolioCalc[id] = value;
-    // Adjust BTC to make total 100%
-    const stockBond = portfolioCalc.stockAllocation + portfolioCalc.bondAllocation;
-    if (stockBond > 100) {
-      if (id === 'stockAllocation') {
-        portfolioCalc.bondAllocation = 100 - value - portfolioCalc.btcAllocation;
-        document.getElementById('bondAllocation').value = Math.max(0, portfolioCalc.bondAllocation);
-      } else {
-        portfolioCalc.stockAllocation = 100 - value - portfolioCalc.btcAllocation;
-        document.getElementById('stockAllocation').value = Math.max(0, portfolioCalc.stockAllocation);
+    // Validate portfolio size
+    if (id === 'portfolioSize') {
+      if (!validatePortfolioSize(value)) {
+        // Clamp to valid range
+        value = Math.max(portfolioCalc.minPortfolioSize, Math.min(portfolioCalc.maxPortfolioSize, value));
+        const el = document.getElementById(id);
+        if (el) el.value = value;
       }
+      portfolioCalc[id] = value;
     }
-    portfolioCalc.btcAllocation = 100 - portfolioCalc.stockAllocation - portfolioCalc.bondAllocation;
-    document.getElementById('btcAllocation').value = Math.max(0, portfolioCalc.btcAllocation);
-  } else {
-    portfolioCalc[id] = value;
-  }
+    // Handle allocation constraints
+    else if (id === 'btcAllocation') {
+      value = clamp(value, 0, 50);
+      portfolioCalc.btcAllocation = value;
+      // Proportionally reduce stocks and bonds
+      const remaining = 100 - value;
+      const ratio = portfolioCalc.stockAllocation / (portfolioCalc.stockAllocation + portfolioCalc.bondAllocation) || 0.6;
+      portfolioCalc.stockAllocation = Math.round(remaining * ratio);
+      portfolioCalc.bondAllocation = remaining - portfolioCalc.stockAllocation;
 
-  updateSliderDisplays();
-  calculatePortfolio();
+      const stockEl = document.getElementById('stockAllocation');
+      const bondEl = document.getElementById('bondAllocation');
+      if (stockEl) stockEl.value = portfolioCalc.stockAllocation;
+      if (bondEl) bondEl.value = portfolioCalc.bondAllocation;
+    } else if (id === 'stockAllocation' || id === 'bondAllocation') {
+      value = clamp(value, 0, 100);
+      portfolioCalc[id] = value;
+      // Adjust BTC to make total 100%
+      const stockBond = portfolioCalc.stockAllocation + portfolioCalc.bondAllocation;
+      if (stockBond > 100) {
+        if (id === 'stockAllocation') {
+          portfolioCalc.bondAllocation = 100 - value - portfolioCalc.btcAllocation;
+          const bondEl = document.getElementById('bondAllocation');
+          if (bondEl) bondEl.value = Math.max(0, portfolioCalc.bondAllocation);
+        } else {
+          portfolioCalc.stockAllocation = 100 - value - portfolioCalc.btcAllocation;
+          const stockEl = document.getElementById('stockAllocation');
+          if (stockEl) stockEl.value = Math.max(0, portfolioCalc.stockAllocation);
+        }
+      }
+      portfolioCalc.btcAllocation = clamp(100 - portfolioCalc.stockAllocation - portfolioCalc.bondAllocation, 0, 100);
+      const btcEl = document.getElementById('btcAllocation');
+      if (btcEl) btcEl.value = portfolioCalc.btcAllocation;
+    } else {
+      portfolioCalc[id] = value;
+    }
+
+    updateSliderDisplays();
+    calculatePortfolio();
+  } catch (err) {
+    console.error('Error handling input change:', err);
+  }
 }
 
 function updateSliderDisplays() {
-  // Update displayed values next to sliders
-  const displays = {
-    'stockAllocationValue': portfolioCalc.stockAllocation + '%',
-    'bondAllocationValue': portfolioCalc.bondAllocation + '%',
-    'btcAllocationValue': portfolioCalc.btcAllocation + '%',
-    'timeHorizonValue': portfolioCalc.timeHorizon + ' years'
-  };
+  try {
+    // Update displayed values next to sliders
+    const displays = {
+      'stockAllocationValue': portfolioCalc.stockAllocation + '%',
+      'bondAllocationValue': portfolioCalc.bondAllocation + '%',
+      'btcAllocationValue': portfolioCalc.btcAllocation + '%',
+      'timeHorizonValue': portfolioCalc.timeHorizon + ' years'
+    };
 
-  Object.entries(displays).forEach(([id, value]) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = value;
-  });
+    Object.entries(displays).forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    });
+
+    // Update ARIA values for sliders
+    const sliders = {
+      'stockAllocation': portfolioCalc.stockAllocation,
+      'bondAllocation': portfolioCalc.bondAllocation,
+      'btcAllocation': portfolioCalc.btcAllocation,
+      'timeHorizon': portfolioCalc.timeHorizon
+    };
+
+    Object.entries(sliders).forEach(([id, value]) => {
+      const el = document.getElementById(id);
+      if (el) el.setAttribute('aria-valuenow', value);
+    });
+  } catch (err) {
+    console.error('Error updating slider displays:', err);
+  }
 }
 
 function calculatePortfolio() {
@@ -158,7 +229,11 @@ function simulatePortfolio(initialValue, stockPct, bondPct, btcPct, years, start
 
   results.finalValue = value;
   results.totalReturn = ((value - initialValue) / initialValue) * 100;
-  results.cagr = (Math.pow(value / initialValue, 1 / years) - 1) * 100;
+  if (years > 0 && initialValue > 0) {
+    results.cagr = (Math.pow(value / initialValue, 1 / years) - 1) * 100;
+  } else {
+    results.cagr = 0;
+  }
   results.volatility = calculateStdDev(results.returns);
   results.sharpe = results.volatility > 0 ? (results.cagr - 2) / results.volatility : 0; // Assume 2% risk-free
 
@@ -166,6 +241,7 @@ function simulatePortfolio(initialValue, stockPct, bondPct, btcPct, years, start
 }
 
 function calculateStdDev(arr) {
+  if (!arr || arr.length === 0) return 0;
   const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
   const squaredDiffs = arr.map(x => Math.pow(x - mean, 2));
   return Math.sqrt(squaredDiffs.reduce((a, b) => a + b, 0) / arr.length);
@@ -195,13 +271,17 @@ function updateMetrics(traditional, withBtc) {
 }
 
 function setMetric(id, value, isPositive = null) {
-  const el = document.getElementById(id);
-  if (el) {
-    el.textContent = value;
-    if (isPositive !== null) {
-      el.classList.remove('positive', 'negative');
-      el.classList.add(isPositive ? 'positive' : 'negative');
+  try {
+    const el = document.getElementById(id);
+    if (el) {
+      el.textContent = value;
+      if (isPositive !== null) {
+        el.classList.remove('positive', 'negative');
+        el.classList.add(isPositive ? 'positive' : 'negative');
+      }
     }
+  } catch (e) {
+    console.error('Error setting metric:', id, e);
   }
 }
 
@@ -214,21 +294,48 @@ function formatCurrency(value) {
 }
 
 function updateChart(traditional, withBtc) {
-  const ctx = document.getElementById('portfolioChart');
-  if (!ctx) return;
+  try {
+    const ctx = document.getElementById('portfolioChart');
+    const errorDiv = document.getElementById('chartError');
 
-  // Destroy existing chart if it exists
-  if (window.portfolioChartInstance) {
-    window.portfolioChartInstance.destroy();
-  }
+    if (!ctx) {
+      console.error('Chart canvas not found');
+      if (errorDiv) {
+        errorDiv.style.display = 'block';
+        errorDiv.textContent = '';
+        const title = document.createElement('div');
+        title.className = 'callout-title';
+        title.textContent = 'Chart Container Error';
+        const msg = document.createElement('p');
+        msg.textContent = 'Unable to find chart element on the page.';
+        errorDiv.appendChild(title);
+        errorDiv.appendChild(msg);
+      }
+      return;
+    }
 
-  // Check if Chart.js is loaded
-  if (typeof Chart === 'undefined') {
-    console.warn('Chart.js not loaded');
-    return;
-  }
+    // Destroy existing chart if it exists
+    if (window.portfolioChartInstance) {
+      window.portfolioChartInstance.destroy();
+    }
 
-  window.portfolioChartInstance = new Chart(ctx, {
+    // Check if Chart.js is loaded
+    if (typeof Chart === 'undefined') {
+      console.warn('Chart.js not loaded');
+      if (errorDiv) {
+        errorDiv.style.display = 'block';
+      }
+      ctx.style.display = 'none';
+      return;
+    }
+
+    // Hide error message and show chart
+    if (errorDiv) {
+      errorDiv.style.display = 'none';
+    }
+    ctx.style.display = 'block';
+
+    window.portfolioChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
       labels: traditional.years,
@@ -288,6 +395,26 @@ function updateChart(traditional, withBtc) {
       }
     }
   });
+  } catch (err) {
+    console.error('Error creating chart:', err);
+    const errorDiv = document.getElementById('chartError');
+    const ctx = document.getElementById('portfolioChart');
+
+    if (errorDiv) {
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = '';
+      const title = document.createElement('div');
+      title.className = 'callout-title';
+      title.textContent = 'Chart Error';
+      const msg = document.createElement('p');
+      msg.textContent = 'An error occurred while creating the chart: ' + (err.message || 'Unknown error');
+      errorDiv.appendChild(title);
+      errorDiv.appendChild(msg);
+    }
+    if (ctx) {
+      ctx.style.display = 'none';
+    }
+  }
 }
 
 // Initialize on page load

@@ -33,25 +33,25 @@
     <!-- Strategy Selection -->
     <h2>Select a Strategy</h2>
     <div class="card-grid" style="margin-top: var(--space-lg);">
-      <div class="card" onclick="showStrategy('nqdc')" style="cursor: pointer;" id="card-nqdc">
+      <div class="card" onclick="showStrategy('nqdc')" onkeypress="if(event.key==='Enter'||event.key===' ')showStrategy('nqdc')" tabindex="0" role="button" aria-label="View NQDC Plans strategy" style="cursor: pointer;" id="card-nqdc">
         <h3 class="card-title">NQDC Plans</h3>
         <p>Non-qualified deferred compensation with Bitcoin as an investment option.</p>
         <span class="text-primary" style="font-size: 0.875rem;">Chapter 9 &rarr;</span>
       </div>
 
-      <div class="card" onclick="showStrategy('treasury')" style="cursor: pointer;" id="card-treasury">
+      <div class="card" onclick="showStrategy('treasury')" onkeypress="if(event.key==='Enter'||event.key===' ')showStrategy('treasury')" tabindex="0" role="button" aria-label="View Treasury Strategy" style="cursor: pointer;" id="card-treasury">
         <h3 class="card-title">Treasury Strategy</h3>
         <p>Corporate balance sheet Bitcoin allocation a la Strategy/MicroStrategy.</p>
         <span class="text-primary" style="font-size: 0.875rem;">Chapter 7 & 11 &rarr;</span>
       </div>
 
-      <div class="card" onclick="showStrategy('etf')" style="cursor: pointer;" id="card-etf">
+      <div class="card" onclick="showStrategy('etf')" onkeypress="if(event.key==='Enter'||event.key===' ')showStrategy('etf')" tabindex="0" role="button" aria-label="View ETF Allocation strategy" style="cursor: pointer;" id="card-etf">
         <h3 class="card-title">ETF Allocation</h3>
         <p>Bitcoin ETF in a diversified portfolio for asset managers.</p>
         <span class="text-primary" style="font-size: 0.875rem;">Chapter 10 &rarr;</span>
       </div>
 
-      <div class="card" onclick="showStrategy('pension')" style="cursor: pointer;" id="card-pension">
+      <div class="card" onclick="showStrategy('pension')" onkeypress="if(event.key==='Enter'||event.key===' ')showStrategy('pension')" tabindex="0" role="button" aria-label="View Pension Fund strategy" style="cursor: pointer;" id="card-pension">
         <h3 class="card-title">Pension Fund</h3>
         <p>Bitcoin allocation in defined benefit or defined contribution plans.</p>
         <span class="text-primary" style="font-size: 0.875rem;">Chapter 13 &rarr;</span>

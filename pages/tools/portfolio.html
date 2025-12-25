@@ -45,12 +45,12 @@
 
         <div class="calculator-row" style="flex-direction: column; align-items: stretch;">
           <label for="portfolioSize">Initial Portfolio Size</label>
-          <input type="number" id="portfolioSize" value="1000000" min="10000" step="10000">
+          <input type="number" id="portfolioSize" value="1000000" min="10000" step="10000" aria-label="Initial portfolio size in dollars">
         </div>
 
         <div class="calculator-row" style="flex-direction: column; align-items: stretch;">
           <label for="startYear">Start Year</label>
-          <select id="startYear">
+          <select id="startYear" aria-label="Start year for simulation">
             <option value="2014">2014</option>
             <option value="2015">2015</option>
             <option value="2016">2016</option>
@@ -63,24 +63,24 @@
 
         <div class="calculator-row" style="flex-direction: column; align-items: stretch;">
           <label for="timeHorizon">Time Horizon: <span id="timeHorizonValue">10 years</span></label>
-          <input type="range" id="timeHorizon" value="10" min="1" max="11" step="1">
+          <input type="range" id="timeHorizon" value="10" min="1" max="11" step="1" aria-label="Time horizon in years" aria-valuemin="1" aria-valuemax="11" aria-valuenow="10">
         </div>
 
         <h4 style="margin-top: var(--space-xl); margin-bottom: var(--space-md); color: var(--primary);">Allocation</h4>
 
         <div class="calculator-row" style="flex-direction: column; align-items: stretch;">
           <label for="stockAllocation">Stocks: <span id="stockAllocationValue">60%</span></label>
-          <input type="range" id="stockAllocation" value="60" min="0" max="100" step="5">
+          <input type="range" id="stockAllocation" value="60" min="0" max="100" step="5" aria-label="Stock allocation percentage" aria-valuemin="0" aria-valuemax="100" aria-valuenow="60">
         </div>
 
         <div class="calculator-row" style="flex-direction: column; align-items: stretch;">
           <label for="bondAllocation">Bonds: <span id="bondAllocationValue">40%</span></label>
-          <input type="range" id="bondAllocation" value="40" min="0" max="100" step="5">
+          <input type="range" id="bondAllocation" value="40" min="0" max="100" step="5" aria-label="Bond allocation percentage" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40">
         </div>
 
         <div class="calculator-row" style="flex-direction: column; align-items: stretch;">
           <label for="btcAllocation" style="color: var(--primary);">Bitcoin: <span id="btcAllocationValue">0%</span></label>
-          <input type="range" id="btcAllocation" value="0" min="0" max="50" step="1">
+          <input type="range" id="btcAllocation" value="0" min="0" max="50" step="1" aria-label="Bitcoin allocation percentage" aria-valuemin="0" aria-valuemax="50" aria-valuenow="0">
         </div>
 
         <div class="callout callout-warning" style="margin-top: var(--space-lg);">
@@ -96,6 +96,10 @@
         <div class="chart-container">
           <h3 class="chart-title">Portfolio Value Over Time</h3>
           <div class="chart-wrapper">
+            <div id="chartError" class="callout callout-error" style="display: none;">
+              <div class="callout-title">Chart Unavailable</div>
+              <p>Unable to load charting library. Please check your internet connection and refresh the page.</p>
+            </div>
             <canvas id="portfolioChart"></canvas>
           </div>
         </div>

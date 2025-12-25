@@ -4,6 +4,8 @@
 
 // ===== Constants =====
 const STORAGE_PREFIX = 'bfi_';
+const STORAGE_VERSION = 'v1';
+const MAX_STORAGE_SIZE = 5000000; // 5MB limit
 
 // ===== DOM Utilities =====
 function $(selector) {
@@ -96,6 +98,7 @@ function randomInt(min, max) {
 
 // Financial calculations
 function calculateCAGR(startValue, endValue, years) {
+  if (years === 0 || startValue <= 0 || endValue < 0) return 0;
   return (Math.pow(endValue / startValue, 1 / years) - 1) * 100;
 }
 
@@ -133,18 +136,57 @@ function calculateVolatility(returns) {
 // ===== Local Storage =====
 function saveToStorage(key, value) {
   try {
-    localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
+    // Sanitize key
+    const sanitizedKey = STORAGE_PREFIX + String(key).replace(/[^a-zA-Z0-9_-]/g, '_');
+
+    // Validate value
+    if (value === undefined || value === null) {
+      console.warn('Cannot save null/undefined value to storage');
+      return false;
+    }
+
+    // Check storage availability
+    const serialized = JSON.stringify({
+      version: STORAGE_VERSION,
+      timestamp: Date.now(),
+      data: value
+    });
+
+    if (serialized.length > MAX_STORAGE_SIZE) {
+      console.error('Data exceeds storage limit');
+      return false;
+    }
+
+    localStorage.setItem(sanitizedKey, serialized);
     return true;
   } catch (e) {
-    console.error('Error saving to localStorage:', e);
+    if (e.name === 'QuotaExceededError') {
+      console.error('Storage quota exceeded');
+    } else {
+      console.error('Error saving to localStorage:', e);
+    }
     return false;
   }
 }
 
 function loadFromStorage(key, defaultValue = null) {
   try {
-    const item = localStorage.getItem(STORAGE_PREFIX + key);
-    return item ? JSON.parse(item) : defaultValue;
+    const sanitizedKey = STORAGE_PREFIX + String(key).replace(/[^a-zA-Z0-9_-]/g, '_');
+    const item = localStorage.getItem(sanitizedKey);
+
+    if (!item) {
+      return defaultValue;
+    }
+
+    const parsed = JSON.parse(item);
+
+    // Check version and migrate if needed
+    if (!parsed.version) {
+      // Legacy format, return data directly
+      return parsed;
+    }
+
+    return parsed.data !== undefined ? parsed.data : defaultValue;
   } catch (e) {
     console.error('Error loading from localStorage:', e);
     return defaultValue;
@@ -153,10 +195,23 @@ function loadFromStorage(key, defaultValue = null) {
 
 function removeFromStorage(key) {
   try {
-    localStorage.removeItem(STORAGE_PREFIX + key);
+    const sanitizedKey = STORAGE_PREFIX + String(key).replace(/[^a-zA-Z0-9_-]/g, '_');
+    localStorage.removeItem(sanitizedKey);
     return true;
   } catch (e) {
     console.error('Error removing from localStorage:', e);
+    return false;
+  }
+}
+
+function clearStorage() {
+  try {
+    Object.keys(localStorage)
+      .filter(key => key.startsWith(STORAGE_PREFIX))
+      .forEach(key => localStorage.removeItem(key));
+    return true;
+  } catch (e) {
+    console.error('Error clearing localStorage:', e);
     return false;
   }
 }
@@ -166,6 +221,12 @@ const readingProgress = {
   chapters: loadFromStorage('reading_progress', {}),
 
   markRead(chapterId) {
+    // Validate chapter ID
+    if (!chapterId || typeof chapterId !== 'string') {
+      console.error('Invalid chapter ID');
+      return;
+    }
+
     this.chapters[chapterId] = {
       completed: true,
       timestamp: Date.now()
@@ -175,34 +236,44 @@ const readingProgress = {
   },
 
   isRead(chapterId) {
+    if (!chapterId || typeof chapterId !== 'string') return false;
     return this.chapters[chapterId]?.completed || false;
   },
 
   getProgress() {
-    const totalChapters = 13; // Total chapters in the book
-    const readCount = Object.values(this.chapters).filter(c => c.completed).length;
-    return (readCount / totalChapters) * 100;
+    const totalChapters = 13;
+    const readCount = Object.values(this.chapters).filter(c => c && c.completed).length;
+    return Math.min((readCount / totalChapters) * 100, 100);
   },
 
   updateUI() {
-    // Update any progress bars on the page
-    const progressBars = $$('.reading-progress-fill');
-    const progress = this.getProgress();
-    progressBars.forEach(bar => {
-      bar.style.width = progress + '%';
-    });
-
-    // Update chapter status indicators
-    $$('.toc-chapter').forEach(el => {
-      const chapterId = el.dataset.chapter;
-      if (chapterId && this.isRead(chapterId)) {
-        const status = el.querySelector('.toc-chapter-status');
-        if (status) {
-          status.textContent = 'Completed';
-          status.classList.add('completed');
+    try {
+      // Update any progress bars on the page
+      const progressBars = $$('.reading-progress');
+      const progress = this.getProgress();
+      progressBars.forEach(bar => {
+        if (bar) {
+          const fill = bar.querySelector('.reading-progress-fill');
+          if (fill) fill.style.width = progress + '%';
+          bar.setAttribute('aria-valuenow', Math.round(progress));
         }
-      }
-    });
+      });
+
+      // Update chapter status indicators
+      $$('.toc-chapter').forEach(el => {
+        if (!el) return;
+        const chapterId = el.dataset.chapter;
+        if (chapterId && this.isRead(chapterId)) {
+          const status = el.querySelector('.toc-chapter-status');
+          if (status) {
+            status.textContent = 'Completed';
+            status.classList.add('completed');
+          }
+        }
+      });
+    } catch (e) {
+      console.error('Error updating UI:', e);
+    }
   }
 };
 
@@ -249,28 +320,51 @@ function initNavigation() {
   const navLinks = $('.nav-links');
 
   if (navToggle && navLinks) {
+    // Set initial aria-expanded state
+    navToggle.setAttribute('aria-expanded', 'false');
+
     navToggle.addEventListener('click', () => {
-      navLinks.classList.toggle('open');
+      const isOpen = navLinks.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', isOpen);
+
+      // Focus first link when menu opens
+      if (isOpen) {
+        const firstLink = navLinks.querySelector('a');
+        if (firstLink) firstLink.focus();
+      }
     });
   }
+
+  // Close mobile menu on escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && navLinks && navLinks.classList.contains('open')) {
+      navLinks.classList.remove('open');
+      if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
+      if (navToggle) navToggle.focus();
+    }
+  });
 
   // Set active nav link based on current page
   const currentPath = window.location.pathname;
   $$('.nav-links a').forEach(link => {
-    if (link.getAttribute('href') === currentPath ||
-        currentPath.includes(link.getAttribute('href'))) {
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (href && (href === currentPath || currentPath.includes(href))) {
       link.classList.add('active');
     }
   });
 
-  // Add scrolled class to nav on scroll
+  // Add scrolled class to nav on scroll (debounced)
   const nav = $('.nav');
   if (nav) {
+    let ticking = false;
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 50) {
-        nav.classList.add('scrolled');
-      } else {
-        nav.classList.remove('scrolled');
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          nav.classList.toggle('scrolled', window.scrollY > 50);
+          ticking = false;
+        });
+        ticking = true;
       }
     });
   }
@@ -418,11 +512,31 @@ const sampleBitcoinData = {
   }
 };
 
+// ===== Mark as Read Button Handler =====
+function initMarkAsReadButtons() {
+  const buttons = $$('[data-mark-read]');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const chapterId = btn.dataset.markRead;
+      if (chapterId && readingProgress) {
+        try {
+          readingProgress.markRead(chapterId);
+          btn.textContent = 'Marked as Read';
+          btn.disabled = true;
+        } catch (err) {
+          console.error('Error marking chapter as read:', err);
+        }
+      }
+    });
+  });
+}
+
 // ===== Initialize =====
 document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
   initContentToggle();
   initScrollAnimations();
+  initMarkAsReadButtons();
   readingProgress.updateUI();
 });
 
