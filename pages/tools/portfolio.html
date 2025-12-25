@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Calculator | Bitcoin for Institutions</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#8383;</text></svg>">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="../../index.html" class="nav-logo">
+        <span class="bitcoin-icon">&#8383;</span>
+        <span>Bitcoin for Institutions</span>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="../toc.html">Chapters</a></li>
+        <li><a href="portfolio.html" class="active">Tools</a></li>
+        <li><a href="quiz.html">Quiz</a></li>
+        <li><a href="../about.html">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container-wide">
+    <h1>Portfolio Allocation Calculator</h1>
+    <p class="text-muted mb-4">
+      Model how different Bitcoin allocations would have affected a traditional 60/40 portfolio using historical data from 2014-2024.
+    </p>
+
+    <div class="callout callout-info mb-4">
+      <div class="callout-title">How to Use This Tool</div>
+      <p>
+        Adjust the allocation sliders to add Bitcoin to your portfolio. The calculator will show how this allocation would have performed compared to a traditional 60/40 stocks/bonds portfolio over your selected time period.
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--space-xl); align-items: start;">
+      <!-- Input Panel -->
+      <div class="calculator-panel">
+        <h3 style="margin-bottom: var(--space-lg);">Portfolio Settings</h3>
+
+        <div class="calculator-row" style="flex-direction: column; align-items: stretch;">
+          <label for="portfolioSize">Initial Portfolio Size</label>
+          <input type="number" id="portfolioSize" value="1000000" min="10000" step="10000">
+        </div>
+
+        <div class="calculator-row" style="flex-direction: column; align-items: stretch;">
+          <label for="startYear">Start Year</label>
+          <select id="startYear">
+            <option value="2014">2014</option>
+            <option value="2015">2015</option>
+            <option value="2016">2016</option>
+            <option value="2017">2017</option>
+            <option value="2018">2018</option>
+            <option value="2019">2019</option>
+            <option value="2020">2020</option>
+          </select>
+        </div>
+
+        <div class="calculator-row" style="flex-direction: column; align-items: stretch;">
+          <label for="timeHorizon">Time Horizon: <span id="timeHorizonValue">10 years</span></label>
+          <input type="range" id="timeHorizon" value="10" min="1" max="11" step="1">
+        </div>
+
+        <h4 style="margin-top: var(--space-xl); margin-bottom: var(--space-md); color: var(--primary);">Allocation</h4>
+
+        <div class="calculator-row" style="flex-direction: column; align-items: stretch;">
+          <label for="stockAllocation">Stocks: <span id="stockAllocationValue">60%</span></label>
+          <input type="range" id="stockAllocation" value="60" min="0" max="100" step="5">
+        </div>
+
+        <div class="calculator-row" style="flex-direction: column; align-items: stretch;">
+          <label for="bondAllocation">Bonds: <span id="bondAllocationValue">40%</span></label>
+          <input type="range" id="bondAllocation" value="40" min="0" max="100" step="5">
+        </div>
+
+        <div class="calculator-row" style="flex-direction: column; align-items: stretch;">
+          <label for="btcAllocation" style="color: var(--primary);">Bitcoin: <span id="btcAllocationValue">0%</span></label>
+          <input type="range" id="btcAllocation" value="0" min="0" max="50" step="1">
+        </div>
+
+        <div class="callout callout-warning" style="margin-top: var(--space-lg);">
+          <p style="font-size: 0.875rem; margin-bottom: 0;">
+            <strong>Note:</strong> This uses historical returns. Past performance does not guarantee future results.
+          </p>
+        </div>
+      </div>
+
+      <!-- Results Panel -->
+      <div>
+        <!-- Chart -->
+        <div class="chart-container">
+          <h3 class="chart-title">Portfolio Value Over Time</h3>
+          <div class="chart-wrapper">
+            <canvas id="portfolioChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Metrics Comparison -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); margin-top: var(--space-xl);">
+          <!-- Traditional Portfolio -->
+          <div class="calculator-panel">
+            <h4 style="margin-bottom: var(--space-md); color: var(--text-muted);">60/40 Portfolio</h4>
+            <div class="metric-grid" style="grid-template-columns: repeat(2, 1fr);">
+              <div class="metric-card">
+                <div class="metric-value" id="traditionalFinal">$0</div>
+                <div class="metric-label">Final Value</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value" id="traditionalCAGR">0%</div>
+                <div class="metric-label">CAGR</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value" id="traditionalVol">0%</div>
+                <div class="metric-label">Volatility</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value" id="traditionalSharpe">0</div>
+                <div class="metric-label">Sharpe Ratio</div>
+              </div>
+            </div>
+            <div class="metric-card" style="margin-top: var(--space-md);">
+              <div class="metric-value negative" id="traditionalDrawdown">0%</div>
+              <div class="metric-label">Max Drawdown</div>
+            </div>
+          </div>
+
+          <!-- BTC Portfolio -->
+          <div class="calculator-panel" style="border-color: var(--primary);">
+            <h4 style="margin-bottom: var(--space-md); color: var(--primary);">With Bitcoin</h4>
+            <div class="metric-grid" style="grid-template-columns: repeat(2, 1fr);">
+              <div class="metric-card">
+                <div class="metric-value" id="btcFinal">$0</div>
+                <div class="metric-label">Final Value</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value" id="btcCAGR">0%</div>
+                <div class="metric-label">CAGR</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value" id="btcVol">0%</div>
+                <div class="metric-label">Volatility</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-value" id="btcSharpe">0</div>
+                <div class="metric-label">Sharpe Ratio</div>
+              </div>
+            </div>
+            <div class="metric-card" style="margin-top: var(--space-md);">
+              <div class="metric-value negative" id="btcDrawdown">0%</div>
+              <div class="metric-label">Max Drawdown</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comparison Summary -->
+        <div class="calculator-panel" style="margin-top: var(--space-xl); text-align: center;">
+          <h4 style="margin-bottom: var(--space-md);">Adding Bitcoin Would Have...</h4>
+          <div style="display: flex; justify-content: center; gap: var(--space-2xl);">
+            <div>
+              <div class="stat-value" id="valueDiff">$0</div>
+              <div class="stat-label">Additional Value</div>
+            </div>
+            <div>
+              <div class="stat-value" id="cagrDiff">0%</div>
+              <div class="stat-label">Higher CAGR</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Educational Content -->
+    <div class="mt-4">
+      <h2>Understanding the Metrics</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h4 class="card-title">CAGR</h4>
+          <p>Compound Annual Growth Rate - the average yearly return if gains were reinvested. Higher is better.</p>
+        </div>
+        <div class="card">
+          <h4 class="card-title">Volatility</h4>
+          <p>Standard deviation of annual returns - measures how much returns vary. Lower generally means less risk.</p>
+        </div>
+        <div class="card">
+          <h4 class="card-title">Sharpe Ratio</h4>
+          <p>Risk-adjusted return = (Return - Risk Free Rate) / Volatility. Higher means better return per unit of risk.</p>
+        </div>
+        <div class="card">
+          <h4 class="card-title">Max Drawdown</h4>
+          <p>Largest peak-to-trough decline. Shows the worst loss experienced during the period.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Tools -->
+    <div class="mt-4">
+      <h2>Other Tools</h2>
+      <div class="card-grid">
+        <a href="drawdown.html" class="card">
+          <h4 class="card-title">Drawdown Visualizer</h4>
+          <p>Explore Bitcoin's historical drawdowns and recovery times.</p>
+        </a>
+        <a href="simulator.html" class="card">
+          <h4 class="card-title">Strategy Simulator</h4>
+          <p>Model different institutional Bitcoin strategies.</p>
+        </a>
+        <a href="quiz.html" class="card">
+          <h4 class="card-title">Knowledge Quiz</h4>
+          <p>Test your understanding of institutional Bitcoin concepts.</p>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p class="footer-copyright">&copy; 2025 Brian Hirschfield. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="../../scripts/main.js"></script>
+  <script src="../../scripts/portfolio.js"></script>
+</body>
+</html>

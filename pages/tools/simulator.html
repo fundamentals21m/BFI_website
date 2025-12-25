@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strategy Simulator | Bitcoin for Institutions</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#8383;</text></svg>">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="../../index.html" class="nav-logo">
+        <span class="bitcoin-icon">&#8383;</span>
+        <span>Bitcoin for Institutions</span>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="../toc.html">Chapters</a></li>
+        <li><a href="portfolio.html" class="active">Tools</a></li>
+        <li><a href="quiz.html">Quiz</a></li>
+        <li><a href="../about.html">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container">
+    <h1>Institutional Strategy Simulator</h1>
+    <p class="text-muted mb-4">
+      Explore different approaches to institutional Bitcoin adoption. Each strategy has unique characteristics, risk profiles, and regulatory considerations.
+    </p>
+
+    <!-- Strategy Selection -->
+    <h2>Select a Strategy</h2>
+    <div class="card-grid" style="margin-top: var(--space-lg);">
+      <div class="card" onclick="showStrategy('nqdc')" style="cursor: pointer;" id="card-nqdc">
+        <h3 class="card-title">NQDC Plans</h3>
+        <p>Non-qualified deferred compensation with Bitcoin as an investment option.</p>
+        <span class="text-primary" style="font-size: 0.875rem;">Chapter 9 &rarr;</span>
+      </div>
+
+      <div class="card" onclick="showStrategy('treasury')" style="cursor: pointer;" id="card-treasury">
+        <h3 class="card-title">Treasury Strategy</h3>
+        <p>Corporate balance sheet Bitcoin allocation a la Strategy/MicroStrategy.</p>
+        <span class="text-primary" style="font-size: 0.875rem;">Chapter 7 & 11 &rarr;</span>
+      </div>
+
+      <div class="card" onclick="showStrategy('etf')" style="cursor: pointer;" id="card-etf">
+        <h3 class="card-title">ETF Allocation</h3>
+        <p>Bitcoin ETF in a diversified portfolio for asset managers.</p>
+        <span class="text-primary" style="font-size: 0.875rem;">Chapter 10 &rarr;</span>
+      </div>
+
+      <div class="card" onclick="showStrategy('pension')" style="cursor: pointer;" id="card-pension">
+        <h3 class="card-title">Pension Fund</h3>
+        <p>Bitcoin allocation in defined benefit or defined contribution plans.</p>
+        <span class="text-primary" style="font-size: 0.875rem;">Chapter 13 &rarr;</span>
+      </div>
+    </div>
+
+    <!-- Strategy Details -->
+    <div id="strategy-details" class="mt-4" style="display: none;">
+      <!-- NQDC Strategy -->
+      <div id="strategy-nqdc" class="strategy-content" style="display: none;">
+        <h2>NQDC Strategy Analysis</h2>
+
+        <div class="callout callout-info">
+          <div class="callout-title">What is NQDC?</div>
+          <p>
+            Non-qualified deferred compensation allows executives to defer income beyond 401(k) limits. Unlike qualified plans, NQDC is not tax-exempt until distributed and carries counterparty risk.
+          </p>
+        </div>
+
+        <div class="calculator-panel mt-3">
+          <h4>Strategy Characteristics</h4>
+          <div class="metric-grid" style="margin-top: var(--space-md);">
+            <div class="metric-card">
+              <div class="metric-value">Executives</div>
+              <div class="metric-label">Target Audience</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">Moderate</div>
+              <div class="metric-label">Regulatory Complexity</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">Yes</div>
+              <div class="metric-label">Tax Deferral</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value negative">Yes</div>
+              <div class="metric-label">Counterparty Risk</div>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="mt-3">Key Considerations</h3>
+        <ul>
+          <li><strong>ERISA Exemption:</strong> NQDC plans are exempt from ERISA, providing flexibility in investment options</li>
+          <li><strong>Counterparty Risk:</strong> Assets are part of employer's general assets - if employer fails, participants are unsecured creditors</li>
+          <li><strong>409A Compliance:</strong> Strict rules govern distribution timing and election changes</li>
+          <li><strong>Bitcoin Volatility:</strong> High volatility in a retirement vehicle requires participant education</li>
+        </ul>
+
+        <div class="callout callout-warning mt-3">
+          <div class="callout-title">Risk Warning</div>
+          <p>
+            NQDC participants face "double counterparty risk" with Bitcoin: both the employer's credit risk and any custody provider's risk. Careful structuring is essential.
+          </p>
+        </div>
+      </div>
+
+      <!-- Treasury Strategy -->
+      <div id="strategy-treasury" class="strategy-content" style="display: none;">
+        <h2>Treasury Strategy Analysis</h2>
+
+        <div class="callout callout-success">
+          <div class="callout-title">The Strategy Playbook</div>
+          <p>
+            Following MicroStrategy's lead, companies convert cash reserves to Bitcoin as a treasury asset. This preserves purchasing power against monetary debasement while providing upside exposure.
+          </p>
+        </div>
+
+        <div class="calculator-panel mt-3">
+          <h4>Strategy Characteristics</h4>
+          <div class="metric-grid" style="margin-top: var(--space-md);">
+            <div class="metric-card">
+              <div class="metric-value">Public/Private</div>
+              <div class="metric-label">Company Type</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">High</div>
+              <div class="metric-label">Board Involvement</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">Variable</div>
+              <div class="metric-label">Accounting Treatment</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value positive">Full Upside</div>
+              <div class="metric-label">BTC Exposure</div>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="mt-3">Implementation Options</h3>
+        <div class="card-grid">
+          <div class="card">
+            <h4 class="card-title">Direct Purchase</h4>
+            <p>Use existing cash to buy Bitcoin. Simplest approach, immediate exposure.</p>
+          </div>
+          <div class="card">
+            <h4 class="card-title">Convertible Debt</h4>
+            <p>Issue convertible bonds to fund purchases. Leveraged exposure with limited dilution.</p>
+          </div>
+          <div class="card">
+            <h4 class="card-title">ATM Offering</h4>
+            <p>Sell shares at market prices when trading at NAV premium. Accretive to Bitcoin per share.</p>
+          </div>
+          <div class="card">
+            <h4 class="card-title">Bitcoin-Backed Loan</h4>
+            <p>Borrow against existing holdings. Maintain exposure while accessing liquidity.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ETF Strategy -->
+      <div id="strategy-etf" class="strategy-content" style="display: none;">
+        <h2>ETF Allocation Analysis</h2>
+
+        <div class="callout callout-info">
+          <div class="callout-title">The BlackRock Effect</div>
+          <p>
+            Spot Bitcoin ETFs (IBIT, FBTC, etc.) provide institutional-grade access without custody complexity. They fit seamlessly into existing portfolio management infrastructure.
+          </p>
+        </div>
+
+        <div class="calculator-panel mt-3">
+          <h4>Strategy Characteristics</h4>
+          <div class="metric-grid" style="margin-top: var(--space-md);">
+            <div class="metric-card">
+              <div class="metric-value">Asset Managers</div>
+              <div class="metric-label">Target Audience</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">Low</div>
+              <div class="metric-label">Operational Complexity</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">~0.25%</div>
+              <div class="metric-label">Annual Fee</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value positive">SEC Regulated</div>
+              <div class="metric-label">Compliance Status</div>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="mt-3">Allocation Considerations</h3>
+        <ul>
+          <li><strong>Position Sizing:</strong> 1-5% allocation can meaningfully improve portfolio metrics</li>
+          <li><strong>Rebalancing:</strong> High volatility requires clear rebalancing rules</li>
+          <li><strong>Tax Efficiency:</strong> ETF structure provides standard tax treatment</li>
+          <li><strong>Liquidity:</strong> Deep markets enable large trades with minimal slippage</li>
+        </ul>
+
+        <div class="callout mt-3">
+          <div class="callout-title">Buy Side vs. Sell Side</div>
+          <p>
+            Asset managers can use Bitcoin ETFs for return enhancement (buy side) or as hedging instruments (sell side). The strategy depends on the fund's mandate and risk tolerance.
+          </p>
+        </div>
+      </div>
+
+      <!-- Pension Strategy -->
+      <div id="strategy-pension" class="strategy-content" style="display: none;">
+        <h2>Pension Fund Strategy Analysis</h2>
+
+        <div class="callout callout-warning">
+          <div class="callout-title">High Stakes Environment</div>
+          <p>
+            Pension funds manage retirement security for millions. Any Bitcoin allocation decision carries enormous fiduciary responsibility and public scrutiny.
+          </p>
+        </div>
+
+        <div class="calculator-panel mt-3">
+          <h4>Strategy Characteristics</h4>
+          <div class="metric-grid" style="margin-top: var(--space-md);">
+            <div class="metric-card">
+              <div class="metric-value">DB/DC Plans</div>
+              <div class="metric-label">Plan Type</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">Very High</div>
+              <div class="metric-label">Regulatory Scrutiny</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value positive">Tax Exempt</div>
+              <div class="metric-label">Tax Treatment</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-value">Very Long</div>
+              <div class="metric-label">Time Horizon</div>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="mt-3">"Pulling the Goalie"</h3>
+        <p>
+          For underfunded pensions, the conventional approach of de-risking into bonds guarantees failure to meet obligations. Adding Bitcoin exposure is akin to "pulling the goalie" in hockey - a desperate but rational move when behind.
+        </p>
+
+        <div class="card-grid mt-3">
+          <div class="card">
+            <h4 class="card-title">The Problem</h4>
+            <p>$4T+ in unfunded liabilities. Bond returns can't close the gap. Conservative approaches guarantee shortfalls.</p>
+          </div>
+          <div class="card">
+            <h4 class="card-title">The Opportunity</h4>
+            <p>Bitcoin's asymmetric return profile could close funding gaps that no traditional asset can address.</p>
+          </div>
+        </div>
+
+        <div class="callout callout-info mt-3">
+          <div class="callout-title">Tax Advantage</div>
+          <p>
+            Qualified pension plans are tax-exempt. Bitcoin held within these structures avoids capital gains taxes entirely, making the compounding effect even more powerful.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Chapters -->
+    <div class="mt-4">
+      <h2>Related Chapters</h2>
+      <div class="card-grid">
+        <a href="../part3/9-nqdc.html" class="card">
+          <h4 class="card-title">Chapter 9: NQDC</h4>
+          <p>Deep dive into deferred compensation strategies.</p>
+        </a>
+        <a href="../part3/10-etfs.html" class="card">
+          <h4 class="card-title">Chapter 10: ETFs</h4>
+          <p>Mutual fund and ETF allocation approaches.</p>
+        </a>
+        <a href="../part3/11-treasury.html" class="card">
+          <h4 class="card-title">Chapter 11: Treasury</h4>
+          <p>Corporate balance sheet strategies.</p>
+        </a>
+        <a href="../part3/13-pensions.html" class="card">
+          <h4 class="card-title">Chapter 13: Pensions</h4>
+          <p>Pension fund Bitcoin allocation.</p>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p class="footer-copyright">&copy; 2025 Brian Hirschfield. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="../../scripts/main.js"></script>
+  <script>
+    function showStrategy(strategy) {
+      // Hide all strategy contents
+      document.querySelectorAll('.strategy-content').forEach(el => {
+        el.style.display = 'none';
+      });
+
+      // Remove active state from all cards
+      document.querySelectorAll('.card-grid .card').forEach(el => {
+        el.style.borderColor = '';
+      });
+
+      // Show selected strategy
+      const strategyEl = document.getElementById('strategy-' + strategy);
+      if (strategyEl) {
+        strategyEl.style.display = 'block';
+        document.getElementById('strategy-details').style.display = 'block';
+
+        // Highlight selected card
+        const card = document.getElementById('card-' + strategy);
+        if (card) {
+          card.style.borderColor = 'var(--primary)';
+        }
+
+        // Scroll to details
+        document.getElementById('strategy-details').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  </script>
+</body>
+</html>

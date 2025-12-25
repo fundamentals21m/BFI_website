@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knowledge Quiz | Bitcoin for Institutions</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#8383;</text></svg>">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="../../index.html" class="nav-logo">
+        <span class="bitcoin-icon">&#8383;</span>
+        <span>Bitcoin for Institutions</span>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="../toc.html">Chapters</a></li>
+        <li><a href="portfolio.html">Tools</a></li>
+        <li><a href="quiz.html" class="active">Quiz</a></li>
+        <li><a href="../about.html">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container-narrow">
+    <h1>Knowledge Quiz</h1>
+    <p class="text-muted mb-4">
+      Test your understanding of key concepts from "Bitcoin for Institutions." Select the best answer for each question.
+    </p>
+
+    <!-- Progress -->
+    <div class="progress-bar" id="quizProgress">
+      <div class="progress-fill" id="quizProgressFill" style="width: 0%"></div>
+    </div>
+
+    <!-- Quiz Container -->
+    <div id="quizContainer">
+      <!-- Questions will be rendered here -->
+    </div>
+
+    <!-- Results (hidden initially) -->
+    <div id="quizResults" class="quiz-results" style="display: none;">
+      <h2>Quiz Complete!</h2>
+      <div class="quiz-score" id="finalScore">0/10</div>
+      <p class="text-muted" id="scoreMessage">Great job!</p>
+      <div style="margin-top: var(--space-xl);">
+        <button class="btn btn-primary" onclick="restartQuiz()">Try Again</button>
+        <a href="../toc.html" class="btn btn-secondary">Review Chapters</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p class="footer-copyright">&copy; 2025 Brian Hirschfield. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="../../scripts/main.js"></script>
+  <script>
+    // Quiz Questions
+    const quizQuestions = [
+      {
+        question: "According to Chapter 1, why is HODL'ing Bitcoin considered 'irrational'?",
+        options: [
+          "Because Bitcoin has no fundamental value",
+          "Because it requires willful ability to act against short-term incentives",
+          "Because institutions can HODL more effectively than individuals",
+          "Because selling is always more profitable"
+        ],
+        correct: 1,
+        explanation: "HODL'ing requires the willful ability to be 'irrational' by resisting short-term incentives - something difficult to model in software or execute through institutional governance."
+      },
+      {
+        question: "What is the 'melting ice cube' problem that led MicroStrategy to buy Bitcoin?",
+        options: [
+          "Bitcoin's price was falling rapidly",
+          "Corporate cash holdings lose purchasing power to inflation",
+          "The company was running out of cash",
+          "Ice cream sales were declining"
+        ],
+        correct: 1,
+        explanation: "Michael Saylor described MicroStrategy's $500 million cash position as a 'melting ice cube' - losing value to inflation while sitting idle. Bitcoin offered a solution to preserve purchasing power."
+      },
+      {
+        question: "What does 'not your keys, not your coins' mean?",
+        options: [
+          "You need physical keys to access Bitcoin",
+          "Bitcoin requires a keyboard to use",
+          "Whoever controls the private keys controls the Bitcoin",
+          "Keys are the main cost of Bitcoin ownership"
+        ],
+        correct: 2,
+        explanation: "This fundamental Bitcoin maxim means that without possession of private keys, you don't truly own the Bitcoin - you're trusting someone else with absolute control."
+      },
+      {
+        question: "Why do institutions struggle with Bitcoin's time horizon requirements?",
+        options: [
+          "Bitcoin transactions are too slow",
+          "Quarterly reporting and career risk conflict with Bitcoin's 4+ year cycles",
+          "Institutions can't afford to buy Bitcoin",
+          "Bitcoin is only available on weekdays"
+        ],
+        correct: 1,
+        explanation: "Institutions operate on 90-day to 12-month evaluation cycles, while Bitcoin's optimal holding period is 4+ years. This mismatch creates career risk for managers during drawdowns."
+      },
+      {
+        question: "What lesson did the Canadian trucker convoy teach about Bitcoin?",
+        options: [
+          "Truckers prefer to be paid in Bitcoin",
+          "Government can freeze bank accounts but not Bitcoin wallets",
+          "Bitcoin is better for fuel purchases",
+          "Canada has banned Bitcoin"
+        ],
+        correct: 1,
+        explanation: "When the Canadian government froze bank accounts of convoy donors without due process, Bitcoin donations continued flowing - demonstrating Bitcoin's censorship resistance."
+      },
+      {
+        question: "What is the '60/40 problem' that BlackRock identified?",
+        options: [
+          "60% of investors don't understand bonds",
+          "Only 40% of portfolios include Bitcoin",
+          "The bond allocation loses real value when yields are below inflation",
+          "60% of trades happen in 40% of the time"
+        ],
+        correct: 2,
+        explanation: "When bonds yield 4% and inflation runs 5%, the 'safe' 40% bond allocation in a traditional 60/40 portfolio actually loses real purchasing power."
+      },
+      {
+        question: "What is NQDC and why is it relevant to Bitcoin?",
+        options: [
+          "A type of Bitcoin wallet",
+          "Non-qualified deferred compensation - an ERISA-exempt vehicle that can include Bitcoin",
+          "A regulatory body overseeing Bitcoin",
+          "A Bitcoin mining technique"
+        ],
+        correct: 1,
+        explanation: "Non-qualified deferred compensation allows executives to defer income with flexible investment options. Because it's exempt from ERISA, Bitcoin can be included as an investment option."
+      },
+      {
+        question: "What does 'pulling the goalie' mean in the context of pension funds?",
+        options: [
+          "Removing the pension fund manager",
+          "Taking higher risk (like Bitcoin) when conventional approaches guarantee failure",
+          "Withdrawing from the pension fund early",
+          "Investing only in hockey teams"
+        ],
+        correct: 1,
+        explanation: "For underfunded pensions, conservative bond strategies guarantee failure to meet obligations. Adding Bitcoin is like 'pulling the goalie' - a desperate but rational move when behind."
+      },
+      {
+        question: "What is Bitcoin as a 'bearer asset'?",
+        options: [
+          "An asset that can only be owned by bears",
+          "An asset where physical possession (or key possession) constitutes ownership",
+          "An asset that bears interest",
+          "An asset that is heavy to carry"
+        ],
+        correct: 1,
+        explanation: "A bearer asset is one where possession equals ownership - no registry needed, no authority can reassign ownership. Bitcoin is a digital bearer asset controlled by whoever holds the private keys."
+      },
+      {
+        question: "According to the book, what is the typical maximum drawdown Bitcoin holders should expect?",
+        options: [
+          "10-20%",
+          "30-40%",
+          "50-60%",
+          "70-90%"
+        ],
+        correct: 3,
+        explanation: "Every major Bitcoin cycle has seen drawdowns of 77-94%. This extreme volatility is normal and any institutional allocation must account for 70-90% potential drawdowns."
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let answered = false;
+
+    function renderQuestion() {
+      const container = document.getElementById('quizContainer');
+      const q = quizQuestions[currentQuestion];
+
+      // Update progress
+      const progress = ((currentQuestion) / quizQuestions.length) * 100;
+      document.getElementById('quizProgressFill').style.width = progress + '%';
+
+      container.innerHTML = `
+        <div class="quiz-question">
+          <div class="quiz-question-number">Question ${currentQuestion + 1} of ${quizQuestions.length}</div>
+          <div class="quiz-question-text">${q.question}</div>
+          <div class="quiz-options" id="options">
+            ${q.options.map((opt, i) => `
+              <div class="quiz-option" onclick="selectOption(${i})" data-index="${i}">
+                ${opt}
+              </div>
+            `).join('')}
+          </div>
+          <div class="quiz-explanation" id="explanation">
+            ${q.explanation}
+          </div>
+          <div class="text-center mt-3" id="nextBtn" style="display: none;">
+            <button class="btn btn-primary" onclick="nextQuestion()">
+              ${currentQuestion < quizQuestions.length - 1 ? 'Next Question' : 'See Results'}
+            </button>
+          </div>
+        </div>
+      `;
+      answered = false;
+    }
+
+    function selectOption(index) {
+      if (answered) return;
+      answered = true;
+
+      const q = quizQuestions[currentQuestion];
+      const options = document.querySelectorAll('.quiz-option');
+
+      // Mark correct and incorrect
+      options.forEach((opt, i) => {
+        if (i === q.correct) {
+          opt.classList.add('correct');
+        } else if (i === index && index !== q.correct) {
+          opt.classList.add('incorrect');
+        }
+      });
+
+      // Update score
+      if (index === q.correct) {
+        score++;
+      }
+
+      // Show explanation and next button
+      document.getElementById('explanation').classList.add('show');
+      document.getElementById('nextBtn').style.display = 'block';
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < quizQuestions.length) {
+        renderQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.getElementById('quizContainer').style.display = 'none';
+      document.getElementById('quizProgress').style.display = 'none';
+      const results = document.getElementById('quizResults');
+      results.style.display = 'block';
+
+      document.getElementById('finalScore').textContent = `${score}/${quizQuestions.length}`;
+
+      const percentage = (score / quizQuestions.length) * 100;
+      let message;
+      if (percentage === 100) {
+        message = "Perfect score! You've mastered institutional Bitcoin concepts.";
+      } else if (percentage >= 80) {
+        message = "Excellent! You have a strong understanding of the material.";
+      } else if (percentage >= 60) {
+        message = "Good effort! Consider reviewing the chapters for areas you missed.";
+      } else {
+        message = "Keep studying! The chapters contain valuable insights worth revisiting.";
+      }
+      document.getElementById('scoreMessage').textContent = message;
+
+      // Save score to localStorage
+      BFI.saveToStorage('quiz_score', { score, total: quizQuestions.length, date: Date.now() });
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      document.getElementById('quizContainer').style.display = 'block';
+      document.getElementById('quizProgress').style.display = 'block';
+      document.getElementById('quizResults').style.display = 'none';
+      renderQuestion();
+    }
+
+    // Initialize quiz on page load
+    document.addEventListener('DOMContentLoaded', renderQuestion);
+  </script>
+</body>
+</html>

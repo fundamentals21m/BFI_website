@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapter 3: Custody Tradeoffs | Bitcoin for Institutions</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#8383;</text></svg>">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <a href="../../index.html" class="nav-logo">
+        <span class="bitcoin-icon">&#8383;</span>
+        <span>Bitcoin for Institutions</span>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle navigation">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="../toc.html" class="active">Chapters</a></li>
+        <li><a href="../tools/portfolio.html">Tools</a></li>
+        <li><a href="../tools/quiz.html">Quiz</a></li>
+        <li><a href="../about.html">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="progress-bar">
+      <div class="progress-fill" style="width: 23.1%"></div>
+    </div>
+
+    <div class="part-number">Part I: Bitcoin is for Individuals</div>
+    <h1>Chapter 3: Bitcoin Custody Requires a Higher Understanding of Tradeoffs</h1>
+
+    <div class="content-toggle">
+      <button class="content-toggle-btn active" data-view="full">Full Chapter</button>
+      <button class="content-toggle-btn" data-view="summary">Summary</button>
+      <button class="content-toggle-btn" data-view="tools">Key Concepts</button>
+    </div>
+
+    <div class="content-full active">
+      <p>
+        The question of how to custody Bitcoin represents one of the most consequential decisions any holder must make - and for institutions, this decision is exponentially more complex. Unlike traditional assets where custody is handled by regulated intermediaries with decades of established practice, Bitcoin custody requires understanding an entirely new set of tradeoffs.
+      </p>
+
+      <div class="callout callout-warning">
+        <div class="callout-title">Not Your Keys, Not Your Coins</div>
+        <p>
+          This fundamental Bitcoin maxim captures a truth that has no parallel in traditional finance: when you hold your own private keys, no one can take your Bitcoin without your consent. When you don't, you're trusting someone else with absolute control.
+        </p>
+      </div>
+
+      <h2>The Custody Spectrum</h2>
+
+      <p>
+        Bitcoin custody exists on a spectrum from full self-custody to complete third-party custody, with numerous hybrid solutions in between. Each point on this spectrum involves distinct tradeoffs:
+      </p>
+
+      <div class="card-grid">
+        <div class="card">
+          <h4 class="card-title">Self-Custody</h4>
+          <p><strong>Pros:</strong> Complete control, no counterparty risk, censorship resistant</p>
+          <p><strong>Cons:</strong> Full responsibility for security, no recovery if keys are lost, operational complexity</p>
+        </div>
+        <div class="card">
+          <h4 class="card-title">Qualified Custodian</h4>
+          <p><strong>Pros:</strong> Regulatory compliance, insurance coverage, professional security</p>
+          <p><strong>Cons:</strong> Counterparty risk, potential seizure, custody fees</p>
+        </div>
+        <div class="card">
+          <h4 class="card-title">Multi-Sig Hybrid</h4>
+          <p><strong>Pros:</strong> Distributed trust, partial self-sovereignty, recovery options</p>
+          <p><strong>Cons:</strong> Operational complexity, coordination requirements</p>
+        </div>
+        <div class="card">
+          <h4 class="card-title">Exchange Custody</h4>
+          <p><strong>Pros:</strong> Convenience, trading access, familiar interface</p>
+          <p><strong>Cons:</strong> Highest counterparty risk, potential insolvency (FTX), rehypothecation</p>
+        </div>
+      </div>
+
+      <h2>Institutional Complications</h2>
+
+      <p>
+        For institutions, the custody decision is complicated by regulatory requirements, fiduciary duties, insurance considerations, and operational governance. Many institutional investors are legally required to use qualified custodians, limiting their options.
+      </p>
+
+      <div class="callout callout-info">
+        <div class="callout-title">The Qualified Custodian Requirement</div>
+        <p>
+          Registered Investment Advisers (RIAs) managing client assets are generally required under the SEC's Custody Rule to use "qualified custodians." This creates a dependency on third parties that runs counter to Bitcoin's design philosophy.
+        </p>
+      </div>
+
+      <h2>Understanding the Real Risks</h2>
+
+      <p>
+        The history of Bitcoin custody is littered with cautionary tales. Mt. Gox, QuadrigaCX, FTX, and countless smaller exchanges have demonstrated that counterparty risk in Bitcoin is not theoretical - it's existential. When you give someone else control of your Bitcoin, you're trusting them completely.
+      </p>
+
+      <p>
+        Yet self-custody carries its own risks: lost keys, theft, coercion, and operational errors. The challenge is matching the custody solution to the specific risk profile and capabilities of the holder.
+      </p>
+
+      <h2>The Institutional Dilemma</h2>
+
+      <p>
+        Institutions face a fundamental dilemma: Bitcoin was designed for individuals to hold their own keys, but institutions have legal, operational, and governance structures that make self-custody extraordinarily difficult. This mismatch is one of the core tensions in institutional Bitcoin adoption.
+      </p>
+
+      <div class="text-center mt-4">
+        <button class="btn btn-primary" onclick="BFI.readingProgress.markRead('ch3'); this.textContent = 'Marked as Read'; this.disabled = true;">
+          Mark Chapter as Read
+        </button>
+      </div>
+    </div>
+
+    <div class="content-summary">
+      <h2>Chapter Summary</h2>
+
+      <div class="callout">
+        <div class="callout-title">Core Thesis</div>
+        <p>
+          Bitcoin custody involves a unique set of tradeoffs between control and convenience, security and accessibility. Institutions face particular challenges because Bitcoin's design favors individual custody.
+        </p>
+      </div>
+
+      <h3>Key Points</h3>
+      <ul>
+        <li><strong>"Not your keys, not your coins"</strong> - Self-custody provides absolute control but requires absolute responsibility</li>
+        <li><strong>The custody spectrum</strong> - From full self-custody to exchange custody, each option has distinct tradeoffs</li>
+        <li><strong>Regulatory requirements</strong> - Institutions often must use qualified custodians, limiting their options</li>
+        <li><strong>Historical failures</strong> - Mt. Gox, FTX, and others prove counterparty risk is real and catastrophic</li>
+        <li><strong>The institutional dilemma</strong> - Bitcoin's individual-first design conflicts with institutional governance</li>
+      </ul>
+
+      <div class="text-center mt-4">
+        <button class="btn btn-primary" onclick="BFI.readingProgress.markRead('ch3'); this.textContent = 'Marked as Read'; this.disabled = true;">
+          Mark Chapter as Read
+        </button>
+      </div>
+    </div>
+
+    <div class="content-tools">
+      <h2>Key Concepts</h2>
+
+      <div class="card-grid">
+        <div class="card">
+          <h3 class="card-title">Private Keys</h3>
+          <p><strong>Definition:</strong> The cryptographic secret that proves ownership and enables spending of Bitcoin.</p>
+          <p><strong>Critical:</strong> Whoever controls the private keys controls the Bitcoin.</p>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">Multi-Signature (Multi-Sig)</h3>
+          <p><strong>Definition:</strong> A custody arrangement requiring multiple keys to authorize a transaction.</p>
+          <p><strong>Common setup:</strong> 2-of-3 or 3-of-5 signature thresholds.</p>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">Qualified Custodian</h3>
+          <p><strong>Definition:</strong> An entity that meets SEC requirements for safekeeping client assets.</p>
+          <p><strong>Examples:</strong> Banks, broker-dealers, registered futures commission merchants.</p>
+        </div>
+
+        <div class="card">
+          <h3 class="card-title">Counterparty Risk</h3>
+          <p><strong>Definition:</strong> The risk that the other party in an arrangement fails to meet their obligations.</p>
+          <p><strong>Bitcoin context:</strong> Risk that a custodian loses, steals, or becomes unable to return your Bitcoin.</p>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <button class="btn btn-primary" onclick="BFI.readingProgress.markRead('ch3'); this.textContent = 'Marked as Read'; this.disabled = true;">
+          Mark Chapter as Read
+        </button>
+      </div>
+    </div>
+
+    <div class="page-nav">
+      <div class="page-nav-prev">
+        <span class="page-nav-label">Previous Chapter</span>
+        <a href="2-deflationary.html" class="page-nav-title">&larr; Chapter 2: Deflationary Mindset</a>
+      </div>
+      <div class="page-nav-next">
+        <span class="page-nav-label">Next Chapter</span>
+        <a href="4-patience.html" class="page-nav-title">Chapter 4: Patience & Time &rarr;</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <p class="footer-copyright">&copy; 2025 Brian Hirschfield. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="../../scripts/main.js"></script>
+</body>
+</html>
