@@ -436,6 +436,24 @@ strong {
   transform: translateY(-1px);
 }
 
+.btn-success {
+  background: var(--success);
+  color: #000;
+  box-shadow: 0 4px 15px rgba(63, 185, 80, 0.3);
+}
+
+.btn-success:hover {
+  background: #2ea03e;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(63, 185, 80, 0.4);
+  text-decoration: none;
+  color: #000;
+}
+
+.btn-success:active {
+  transform: translateY(-1px);
+}
+
 .btn-secondary {
   background: var(--bg-card);
   color: var(--text);
